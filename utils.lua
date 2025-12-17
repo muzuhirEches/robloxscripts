@@ -78,15 +78,51 @@ function Utils.isPlayerInCastle()
     return room1 ~= nil
 end
 
--- Check if castle is available
-function Utils.isCastleAvailable()
+-- Get castle availability status with time info
+function Utils.getCastleStatus()
     local currentTime = os.date("*t")
     local minute = currentTime.min
     
-    if (minute >= 15 and minute <= 25) or (minute >= 45 and minute <= 56) then
-        return true
+    local isAvailable = (minute >= 15 and minute <= 26) or (minute >= 45 and minute <= 56)
+    
+    local nextAvailableMinute
+    local minutesUntil
+    
+    if minute < 15 then
+        nextAvailableMinute = 15
+        minutesUntil = 15 - minute
+    elseif minute > 26 and minute < 45 then
+        nextAvailableMinute = 45
+        minutesUntil = 45 - minute
+    elseif minute > 56 then
+        nextAvailableMinute = 15
+        minutesUntil = (60 - minute) + 15
+    else
+        -- Currently available
+        local minutesLeft
+        if minute >= 15 and minute <= 26 then
+            minutesLeft = 26 - minute
+        else
+            minutesLeft = 56 - minute
+        end
+        
+        return {
+            available = true,
+            minutesLeft = minutesLeft,
+            message = "OPEN (" .. minutesLeft .. " min left)"
+        }
     end
-    return false
+    
+    return {
+        available = false,
+        minutesUntil = minutesUntil,
+        message = "CLOSED (" .. minutesUntil .. " min until open)"
+    }
+end
+
+-- Check if castle is available
+function Utils.isCastleAvailable()
+    return Utils.getCastleStatus().available
 end
 
 -- Send remote event
