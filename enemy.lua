@@ -53,8 +53,8 @@ function EnemyFarm.init(guiModule, utilsModule, configModule)
     end)
 end
 
--- Wait for castle availability
-local function waitForCastleAvailability()
+-- Wait for castle availability and AUTO-JOIN when ready
+local function waitForCastleAndJoin()
     while not Utils.isCastleAvailable() do
         local status = Utils.getCastleStatus()
         GUI.EnemyStatus.Text = "Status: " .. status.message
@@ -64,7 +64,20 @@ local function waitForCastleAvailability()
         if not running then return false end
     end
     
-    return true
+    -- Castle is now available - AUTO JOIN
+    print("Castle is available! Auto-joining floor 400...")
+    GUI.EnemyStatus.Text = "Status: Castle open! Joining floor 400..."
+    wait(1)
+    
+    local joined = EnemyFarm.joinFloor()
+    if joined then
+        wait(3) -- Wait for teleport to complete
+        GUI.EnemyStatus.Text = "Status: Restarted from floor 400"
+        return true
+    else
+        GUI.EnemyStatus.Text = "Status: Failed to join castle"
+        return false
+    end
 end
 
 -- Buy castle ticket
@@ -317,18 +330,14 @@ function EnemyFarm.start(skipJoin)
                 GUI.EnemyStatus.Text = "Status: Floor 500 reached! Waiting for castle..."
                 print("Floor 500 completed, waiting for castle availability...")
                 
-                local castleReady = waitForCastleAvailability()
+                -- Wait for castle and auto-join when available
+                local success = waitForCastleAndJoin()
                 
-                if castleReady and running then
-                    GUI.EnemyStatus.Text = "Status: Castle available! Rejoining..."
-                    print("Castle is now available, rejoining floor 400")
-                    local joined = EnemyFarm.joinFloor()
-                    if joined then
-                        wait(3) -- Wait for teleport
-                    else
-                        break
-                    end
+                if success and running then
+                    print("Successfully rejoined castle, continuing farm...")
+                    -- Continue farming loop
                 else
+                    print("Failed to rejoin or farming stopped")
                     break
                 end
             elseif checkAllEnemiesDead() then
