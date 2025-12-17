@@ -313,14 +313,14 @@ function EnemyFarm.start(skipJoin)
     
     task.spawn(function()
         while running do
-            local currentRoom = Utils.getPlayerCurrentRoom()
+           local currentRoom = Utils.getPlayerCurrentRoom()
             if currentRoom then
                 GUI.CurrentRoomLabel.Text = "Current Room: " .. currentRoom
                 
                 -- Set speed based on current room
-                if currentRoom == 490 then
+                if currentRoom == 400 then
                     setSpeed(4)
-                elseif currentRoom == 1  then
+                elseif currentRoom == 1 then
                     setSpeed(1)
                 end
             end
