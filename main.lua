@@ -11,6 +11,9 @@ end)
 -- Load modules
 local baseURL = "https://raw.githubusercontent.com/muzuhirEches/robloxscripts/main/"
 
+print("Loading config...")
+local Config = loadstring(game:HttpGet(baseURL .. "config.lua"))()
+
 print("Loading GUI...")
 local GUI = loadstring(game:HttpGet(baseURL .. "gui.lua"))()
 
@@ -25,8 +28,30 @@ local EnemyFarm = loadstring(game:HttpGet(baseURL .. "enemy.lua"))()
 
 -- Initialize
 GUI.init()
-PumpkinFarm.init(GUI, Utils)
-EnemyFarm.init(GUI, Utils)
+PumpkinFarm.init(GUI, Utils, Config)
+EnemyFarm.init(GUI, Utils, Config)
+
+-- Restore previous state if applicable
+local savedConfig = Config.load()
+
+-- Check if we're in castle and should auto-resume
+if Utils.isPlayerInCastle() then
+    print("Player is in castle")
+    
+    -- Auto-resume enemy farm if it was enabled before
+    if savedConfig.enemyFarmEnabled then
+        print("Auto-resuming enemy farm...")
+        wait(2) -- Wait for everything to load
+        EnemyFarm.start(true) -- true = skip join floor
+    end
+end
+
+-- Auto-resume pumpkin farm if it was enabled
+if savedConfig.pumpkinFarmEnabled then
+    print("Auto-resuming pumpkin farm...")
+    wait(2)
+    PumpkinFarm.start()
+end
 
 print("Multi Auto Farm loaded successfully!")
 print("Anti-AFK enabled")
