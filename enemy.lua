@@ -320,7 +320,7 @@ function EnemyFarm.start(skipJoin)
                 -- Set speed based on current room
                 if currentRoom == 490 then
                     setSpeed(4)
-                else if currentRoom == 1 then then
+                elseif currentRoom == 1  then
                     setSpeed(1)
                 end
             end
