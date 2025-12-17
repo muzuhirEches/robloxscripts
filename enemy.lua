@@ -3,6 +3,7 @@ local EnemyFarm = {}
 local running = false
 local teamSwitchRunning = false
 local GUI, Utils, Config
+local lastSpeedRoom = nil  -- Track last room where speed was set
 
 function EnemyFarm.init(guiModule, utilsModule, configModule)
     GUI = guiModule
@@ -73,6 +74,7 @@ local function waitForCastleAndJoin()
     if joined then
         wait(3) -- Wait for teleport to complete
         GUI.EnemyStatus.Text = "Status: Restarted from floor 400"
+        lastSpeedRoom = nil  -- Reset speed tracking after rejoin
         return true
     else
         GUI.EnemyStatus.Text = "Status: Failed to join castle"
@@ -162,6 +164,7 @@ local function setSpeed(speed)
         }
     }
     Utils.sendRemote(args)
+    print("Speed set to:", speed)
 end
 
 -- Check if current room has FirePortal
@@ -317,11 +320,17 @@ function EnemyFarm.start(skipJoin)
             if currentRoom then
                 GUI.CurrentRoomLabel.Text = "Current Room: " .. currentRoom
                 
-                -- Set speed based on current room
-                if currentRoom >= 490 then
-                    setSpeed(4)
-                else
-                    setSpeed(1)
+                -- Set speed based on current room (only when room changes)
+                if currentRoom ~= lastSpeedRoom then
+                    if currentRoom == 400 then
+                        setSpeed(4)
+                        lastSpeedRoom = currentRoom
+                        print("Speed set to 4 (Room 400)")
+                    elseif currentRoom == 1 then
+                        setSpeed(1)
+                        lastSpeedRoom = currentRoom
+                        print("Speed set to 1 (Room 1)")
+                    end
                 end
             end
             
@@ -375,6 +384,7 @@ end
 function EnemyFarm.stop()
     running = false
     teamSwitchRunning = false
+    lastSpeedRoom = nil  -- Reset speed tracking
     Config.update("enemyFarmEnabled", false)  -- Save state
     GUI.EnemyToggle.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
     GUI.EnemyToggle.Text = "Start Enemy Farm"
