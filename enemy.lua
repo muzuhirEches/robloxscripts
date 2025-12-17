@@ -2,11 +2,29 @@ local EnemyFarm = {}
 
 local running = false
 local teamSwitchRunning = false
-local GUI, Utils
+local GUI, Utils, Config
 
-function EnemyFarm.init(guiModule, utilsModule)
+function EnemyFarm.init(guiModule, utilsModule, configModule)
     GUI = guiModule
     Utils = utilsModule
+    Config = configModule
+    
+    -- Update castle status continuously
+    task.spawn(function()
+        while true do
+            local status = Utils.getCastleStatus()
+            
+            if status.available then
+                GUI.CastleStatusLabel.Text = "Castle: " .. status.message
+                GUI.CastleStatusLabel.TextColor3 = Color3.fromRGB(100, 255, 100) -- Green
+            else
+                GUI.CastleStatusLabel.Text = "Castle: " .. status.message
+                GUI.CastleStatusLabel.TextColor3 = Color3.fromRGB(255, 100, 100) -- Red
+            end
+            
+            wait(10) -- Update every 10 seconds
+        end
+    end)
     
     -- Update room label continuously
     task.spawn(function()
@@ -30,7 +48,7 @@ function EnemyFarm.init(guiModule, utilsModule)
         if running then
             EnemyFarm.stop()
         else
-            EnemyFarm.start()
+            EnemyFarm.start(false) -- false = need to join floor
         end
     end)
 end
@@ -38,19 +56,9 @@ end
 -- Wait for castle availability
 local function waitForCastleAvailability()
     while not Utils.isCastleAvailable() do
-        local currentTime = os.date("*t")
-        local minute = currentTime.min
-        local secondsToWait
-        
-        if minute < 15 then
-            secondsToWait = (15 - minute) * 60 - currentTime.sec
-        elseif minute < 45 then
-            secondsToWait = (45 - minute) * 60 - currentTime.sec
-        else
-            secondsToWait = (75 - minute) * 60 - currentTime.sec
-        end
-        
-        GUI.EnemyStatus.Text = "Status: Waiting for castle (" .. math.ceil(secondsToWait / 60) .. " min)"
+        local status = Utils.getCastleStatus()
+        GUI.EnemyStatus.Text = "Status: " .. status.message
+        print("Waiting for castle:", status.message)
         wait(30)
         
         if not running then return false end
@@ -79,6 +87,14 @@ end
 
 -- Join floor 400
 function EnemyFarm.joinFloor()
+    -- Check if castle is available first
+    if not Utils.isCastleAvailable() then
+        local status = Utils.getCastleStatus()
+        GUI.EnemyStatus.Text = "Status: Castle not available! " .. status.message
+        print("Cannot join - castle is closed")
+        return false
+    end
+    
     print("Joining floor 400...")
     GUI.EnemyStatus.Text = "Status: Joining floor 400..."
     
@@ -102,6 +118,7 @@ function EnemyFarm.joinFloor()
     GUI.FloorJoinButton.BackgroundColor3 = Color3.fromRGB(50, 220, 50)
     GUI.FloorJoinButton.Text = "Floor 400 Joined ✓"
     GUI.EnemyStatus.Text = "Status: Ready to farm!"
+    return true
 end
 
 -- Switch team
@@ -261,8 +278,21 @@ local function checkAllEnemiesDead()
 end
 
 -- Start farming
-function EnemyFarm.start()
+-- skipJoin: true if already in castle, false if need to join
+function EnemyFarm.start(skipJoin)
+    -- If not in castle and not skipping join, must join first
+    if not skipJoin and not Utils.isPlayerInCastle() then
+        local joined = EnemyFarm.joinFloor()
+        if not joined then
+            GUI.EnemyStatus.Text = "Status: Failed to join castle"
+            return
+        end
+        -- Wait for teleport to castle
+        wait(3)
+    end
+    
     running = true
+    Config.update("enemyFarmEnabled", true)  -- Save state
     GUI.EnemyToggle.BackgroundColor3 = Color3.fromRGB(50, 220, 50)
     GUI.EnemyToggle.Text = "Stop Enemy Farm"
     
@@ -284,14 +314,20 @@ function EnemyFarm.start()
             
             -- Floor 500 restart logic
             if currentRoom and currentRoom >= 500 and checkAllEnemiesDead() then
-                GUI.EnemyStatus.Text = "Status: Floor 500 reached! Restarting..."
+                GUI.EnemyStatus.Text = "Status: Floor 500 reached! Waiting for castle..."
+                print("Floor 500 completed, waiting for castle availability...")
                 
                 local castleReady = waitForCastleAvailability()
                 
                 if castleReady and running then
                     GUI.EnemyStatus.Text = "Status: Castle available! Rejoining..."
-                    EnemyFarm.joinFloor()
-                    wait(3)
+                    print("Castle is now available, rejoining floor 400")
+                    local joined = EnemyFarm.joinFloor()
+                    if joined then
+                        wait(3) -- Wait for teleport
+                    else
+                        break
+                    end
                 else
                     break
                 end
@@ -330,6 +366,7 @@ end
 function EnemyFarm.stop()
     running = false
     teamSwitchRunning = false
+    Config.update("enemyFarmEnabled", false)  -- Save state
     GUI.EnemyToggle.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
     GUI.EnemyToggle.Text = "Start Enemy Farm"
     GUI.EnemyStatus.Text = "Status: Idle"
