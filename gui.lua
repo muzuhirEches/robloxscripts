@@ -213,6 +213,16 @@ function GUI.init()
     CurrentRoomLabel.TextColor3 = Color3.fromRGB(100, 200, 255)
     CurrentRoomLabel.TextSize = 14
 
+    local CastleStatusLabel = Instance.new("TextLabel")
+    CastleStatusLabel.Parent = EnemyFrame
+    CastleStatusLabel.BackgroundTransparency = 1
+    CastleStatusLabel.Position = UDim2.new(0, 0, 0, 135)
+    CastleStatusLabel.Size = UDim2.new(1, 0, 0, 20)
+    CastleStatusLabel.Font = Enum.Font.GothamBold
+    CastleStatusLabel.Text = "Castle: Checking..."
+    CastleStatusLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+    CastleStatusLabel.TextSize = 12
+    
     EnemyStatus.Parent = EnemyFrame
     EnemyStatus.BackgroundTransparency = 1
     EnemyStatus.Position = UDim2.new(0, 0, 0, 140)
@@ -265,6 +275,7 @@ function GUI.init()
     GUI.EnemyToggle = EnemyToggle
     GUI.EnemyStatus = EnemyStatus
     GUI.CurrentRoomLabel = CurrentRoomLabel
+    GUI.CastleStatusLabel = CastleStatusLabel
 end
 
 return GUI
