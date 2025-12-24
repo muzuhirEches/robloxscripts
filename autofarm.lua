@@ -576,7 +576,7 @@ local function joinFloor()
             {
                 Check = true,
                 Action = "Join",
-                Floor = "400",
+                Floor = "500",
                 Event = "CastleAction"
             },
             "\004"
@@ -812,7 +812,7 @@ local function startEnemyFarming()
             end
             
             -- Check if floor 500 reached with all enemies dead
-            if currentRoom and currentRoom >= 500 and checkAllEnemiesDead() then
+            if currentRoom and currentRoom >= 100 and checkAllEnemiesDead() then
                 EnemyStatus.Text = "Status: Floor 500 reached! Restarting..."
                 print("Floor 500 completed, waiting for castle availability...")
                 
