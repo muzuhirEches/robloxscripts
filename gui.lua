@@ -189,7 +189,7 @@ function GUI.init()
     FloorJoinButton.Position = UDim2.new(0.5, -140, 0, 10)
     FloorJoinButton.Size = UDim2.new(0, 280, 0, 40)
     FloorJoinButton.Font = Enum.Font.GothamBold
-    FloorJoinButton.Text = "Join Floor 400"
+    FloorJoinButton.Text = "Join Floor 500"
     FloorJoinButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     FloorJoinButton.TextSize = 16
     addCorner(FloorJoinButton, 8)
