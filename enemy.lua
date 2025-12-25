@@ -352,7 +352,7 @@ function EnemyFarm.start(skipJoin)
             elseif checkAllEnemiesDead() then
                 GUI.EnemyStatus.Text = "Status: All enemies defeated!"
                 
-                if currentRoom and currentRoom >= 500 then
+                if currentRoom and currentRoom >= 1000 then
                     GUI.EnemyStatus.Text = "Status: Floor 500 - Complete!"
                     wait(5)
                 else
