@@ -804,7 +804,7 @@ local function startEnemyFarming()
                 CurrentRoomLabel.Text = "Current Room: " .. currentRoom
                 
                 -- Set speed based on current room
-                if currentRoom == 490 then
+                if currentRoom == 517 then
                     setSpeed(4)
                 else if currentRoom == 1 then
                     setSpeed(1)
