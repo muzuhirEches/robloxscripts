@@ -66,14 +66,14 @@ local function waitForCastleAndJoin()
     end
     
     -- Castle is now available - AUTO JOIN
-    print("Castle is available! Auto-joining floor 400...")
-    GUI.EnemyStatus.Text = "Status: Castle open! Joining floor 400..."
+    print("Castle is available! Auto-joining floor 500...")
+    GUI.EnemyStatus.Text = "Status: Castle open! Joining floor 500..."
     wait(1)
     
     local joined = EnemyFarm.joinFloor()
     if joined then
         wait(3) -- Wait for teleport to complete
-        GUI.EnemyStatus.Text = "Status: Restarted from floor 400"
+        GUI.EnemyStatus.Text = "Status: Restarted from floor 500"
         lastSpeedRoom = nil  -- Reset speed tracking after rejoin
         return true
     else
@@ -100,7 +100,7 @@ local function buyCastleTicket()
     wait(1)
 end
 
--- Join floor 400
+-- Join floor 500
 function EnemyFarm.joinFloor()
     -- Check if castle is available first
     if not Utils.isCastleAvailable() then
@@ -110,8 +110,8 @@ function EnemyFarm.joinFloor()
         return false
     end
     
-    print("Joining floor 400...")
-    GUI.EnemyStatus.Text = "Status: Joining floor 400..."
+    print("Joining floor 500...")
+    GUI.EnemyStatus.Text = "Status: Joining floor 500..."
     
     buyCastleTicket()
     wait(1)
@@ -121,7 +121,7 @@ function EnemyFarm.joinFloor()
             {
                 Check = true,
                 Action = "Join",
-                Floor = "400",
+                Floor = "500",
                 Event = "CastleAction"
             },
             "\004"
@@ -131,7 +131,7 @@ function EnemyFarm.joinFloor()
     
     wait(2)
     GUI.FloorJoinButton.BackgroundColor3 = Color3.fromRGB(50, 220, 50)
-    GUI.FloorJoinButton.Text = "Floor 400 Joined ✓"
+    GUI.FloorJoinButton.Text = "Floor 500 Joined ✓"
     GUI.EnemyStatus.Text = "Status: Ready to farm!"
     return true
 end
@@ -322,10 +322,10 @@ function EnemyFarm.start(skipJoin)
                 
                 -- Set speed based on current room (only when room changes)
                 if currentRoom ~= lastSpeedRoom then
-                    if currentRoom == 400 then
+                    if currentRoom == 500 then
                         setSpeed(4)
                         lastSpeedRoom = currentRoom
-                        print("Speed set to 4 (Room 400)")
+                        print("Speed set to 4 (Room 500)")
                     elseif currentRoom == 1 then
                         setSpeed(1)
                         lastSpeedRoom = currentRoom
