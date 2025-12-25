@@ -200,7 +200,7 @@ FloorJoinButton.BackgroundColor3 = Color3.fromRGB(220, 150, 50)
 FloorJoinButton.Position = UDim2.new(0.5, -140, 0, 10)
 FloorJoinButton.Size = UDim2.new(0, 280, 0, 40)
 FloorJoinButton.Font = Enum.Font.GothamBold
-FloorJoinButton.Text = "Join Floor 400"
+FloorJoinButton.Text = "Join Floor 500"
 FloorJoinButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 FloorJoinButton.TextSize = 16
 addCorner(FloorJoinButton, 8)
@@ -561,10 +561,10 @@ local function buyCastleTicket()
     print("Ticket purchase request sent")
 end
 
--- Join floor 400
+-- Join floor 500
 local function joinFloor()
-    print("Joining floor 400...")
-    EnemyStatus.Text = "Status: Joining floor 400..."
+    print("Joining floor 500...")
+    EnemyStatus.Text = "Status: Joining floor 500..."
     
     -- First buy ticket
     buyCastleTicket()
@@ -586,7 +586,7 @@ local function joinFloor()
     
     wait(2)
     FloorJoinButton.BackgroundColor3 = Color3.fromRGB(50, 220, 50)
-    FloorJoinButton.Text = "Floor 400 Joined ✓"
+    FloorJoinButton.Text = "Floor 500 Joined ✓"
     EnemyStatus.Text = "Status: Ready to farm!"
     print("Floor join complete!")
 end
@@ -819,11 +819,11 @@ local function startEnemyFarming()
                 local castleReady = waitForCastleAvailability()
                 
                 if castleReady and enemyRunning then
-                    EnemyStatus.Text = "Status: Castle available! Rejoining floor 400..."
-                    print("Castle is now available, rejoining floor 400")
+                    EnemyStatus.Text = "Status: Castle available! Rejoining floor 500..."
+                    print("Castle is now available, rejoining floor 500")
                     joinFloor()
                     wait(3)
-                    EnemyStatus.Text = "Status: Restarted from floor 400"
+                    EnemyStatus.Text = "Status: Restarted from floor 500"
                 else
                     break
                 end
