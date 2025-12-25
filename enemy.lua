@@ -335,7 +335,7 @@ function EnemyFarm.start(skipJoin)
             end
             
             -- Floor 500 restart logic
-            if currentRoom and currentRoom >= 500 and checkAllEnemiesDead() then
+            if currentRoom and currentRoom >= 1000 and checkAllEnemiesDead() then
                 GUI.EnemyStatus.Text = "Status: Floor 500 reached! Waiting for castle..."
                 print("Floor 500 completed, waiting for castle availability...")
                 
