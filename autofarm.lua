@@ -812,7 +812,7 @@ local function startEnemyFarming()
             end
             
             -- Check if floor 500 reached with all enemies dead
-            if currentRoom and currentRoom >= 1000 and checkAllEnemiesDead() then
+            if currentRoom and currentRoom >= 501 and checkAllEnemiesDead() then
                 EnemyStatus.Text = "Status: Floor 500 reached! Restarting..."
                 print("Floor 500 completed, waiting for castle availability...")
                 
@@ -831,7 +831,7 @@ local function startEnemyFarming()
                 EnemyStatus.Text = "Status: All enemies defeated!"
                 print("All enemies defeated!")
                 
-                if currentRoom and currentRoom >= 1000 then
+                if currentRoom and currentRoom >= 501 then
                     print("Floor 500 reached, no FirePortal expected")
                     EnemyStatus.Text = "Status: Floor 500 - Complete!"
                     wait(5)
