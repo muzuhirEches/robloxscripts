@@ -233,6 +233,7 @@ local function startTeamSwitching()
 end
 
 -- Teleport to next enemy
+-- Teleport to next enemy (HIGHEST HP)
 local function teleportToNextEnemy()
     local main = workspace:FindFirstChild("__Main")
     if not main then
@@ -252,18 +253,28 @@ local function teleportToNextEnemy()
         return false
     end
     
+    -- Find enemy with highest HP
+    local highestHPEnemy = nil
+    local highestHP = 0
+    
     for _, child in pairs(server:GetDescendants()) do
         if child:IsA("BasePart") then
             local HP = child:GetAttribute("HP")
             
-            if HP and HP > 0 then
-                GUI.EnemyStatus.Text = "Status: Teleporting to enemy..."
-                Utils.humanoidRootPart.CFrame = child.CFrame * CFrame.new(10, 5, 0)
-                wait(0.5)
-                GUI.EnemyStatus.Text = "Status: Fighting (HP: " .. tostring(HP) .. ")"
-                return true
+            if HP and HP > 0 and HP > highestHP then
+                highestHP = HP
+                highestHPEnemy = child
             end
         end
+    end
+    
+    -- Teleport to highest HP enemy
+    if highestHPEnemy then
+        GUI.EnemyStatus.Text = "Status: Targeting highest HP enemy..."
+        Utils.humanoidRootPart.CFrame = highestHPEnemy.CFrame * CFrame.new(10, 5, 0)
+        wait(0.5)
+        GUI.EnemyStatus.Text = "Status: Fighting (HP: " .. tostring(highestHP) .. ")"
+        return true
     end
     
     GUI.EnemyStatus.Text = "Status: No alive enemies"
