@@ -700,7 +700,7 @@ local function startTeamSwitching()
     teamSwitchRunning = true
     task.spawn(function()
         while teamSwitchRunning do
-            wait(15)
+            wait(7.5)
             
             if not enemyRunning then break end
             
